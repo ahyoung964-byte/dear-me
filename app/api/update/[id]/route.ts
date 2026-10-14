@@ -12,7 +12,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!profile) return NextResponse.json({ error: '프로필 없음' }, { status: 404 });
 
   const current = (profile as Profile).loading as LoadingScreen;
-  const patch = await updateLoading(current, mood, keywords);
+  let patch;
+  try {
+    patch = await updateLoading(current, mood, keywords);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 
   // 패치 적용
   const updatedLoading: LoadingScreen = {

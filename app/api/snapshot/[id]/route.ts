@@ -11,11 +11,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!profile) return NextResponse.json({ error: '프로필 없음' }, { status: 404 });
 
   const p = profile as Profile;
-  const { data } = await db
+  const { data, error: insertError } = await db
     .from('dm_snapshots')
     .insert({ profile_id: id, label, manual: p.manual, loading: p.loading, npc: p.npc })
     .select()
     .single();
 
+  if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
   return NextResponse.json(data as Snapshot);
 }

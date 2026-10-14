@@ -7,7 +7,14 @@ export async function POST(req: NextRequest) {
   const { userId, answers } = await req.json() as { userId: string; answers: QuizAnswers };
   if (!userId || !answers) return NextResponse.json({ error: '필수 값 누락' }, { status: 400 });
 
-  const generated = await generateProfile(answers);
+  let generated;
+  try {
+    generated = await generateProfile(answers);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+
   const db = supabaseServer();
 
   const { data, error } = await db

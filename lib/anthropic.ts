@@ -54,7 +54,11 @@ ${answerText}
 
   const text = res.content[0].type === 'text' ? res.content[0].text : '{}';
   const json = text.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-  return JSON.parse(json) as GeneratedProfile;
+  try {
+    return JSON.parse(json) as GeneratedProfile;
+  } catch {
+    throw new Error(`Claude returned invalid JSON: ${json.slice(0, 200)}`);
+  }
 }
 
 export async function updateLoading(
@@ -84,5 +88,9 @@ export async function updateLoading(
 
   const text = res.content[0].type === 'text' ? res.content[0].text : '{}';
   const json = text.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-  return JSON.parse(json) as LoadingPatch;
+  try {
+    return JSON.parse(json) as LoadingPatch;
+  } catch {
+    throw new Error(`Claude returned invalid JSON: ${json.slice(0, 200)}`);
+  }
 }

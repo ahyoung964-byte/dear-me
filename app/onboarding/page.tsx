@@ -1,12 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import QuestionStep from '@/components/QuestionStep';
 import { QUESTIONS } from '@/lib/questions';
 import { getUserId } from '@/lib/storage';
 import type { QuizAnswers } from '@/lib/types';
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
@@ -56,4 +56,8 @@ export default function OnboardingPage() {
       />
     </main>
   );
+}
+
+export default function OnboardingPage() {
+  return <Suspense><OnboardingContent /></Suspense>;
 }

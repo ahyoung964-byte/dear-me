@@ -13,8 +13,14 @@ function ProfileContent() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/profile/${id}`).then(r => r.json()).then(setProfile);
-  }, [id]);
+    fetch(`/api/profile/${id}`)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.json();
+      })
+      .then(setProfile)
+      .catch(() => router.push('/'));
+  }, [id, router]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href).catch(() => {});
